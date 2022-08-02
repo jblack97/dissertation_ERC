@@ -32,11 +32,7 @@ import torch
 import pdb
 from models.BERT import tokenization
 from models.BERT.BERT import BertConfig, Bert_only
-from models.BERT.TUCOREGCN_BERT import BertConfig, TUCOREGCN_BERT
 
-from models.RoBERTa.tokenization_roberta import RobertaTokenizer
-from models.RoBERTa.TUCOREGCN_RoBERTa import TUCOREGCN_RoBERTa
-from models.RoBERTa.configuration_roberta import RobertaConfig
 
 from optimization import BERTAdam
 
