@@ -650,7 +650,7 @@ def main():
     search_params_range = {arg_name : arg_val for arg_name, arg_val in arg_dict.items() if 'range' in arg_name}  
     param_grid = list(itertools.product(search_params_range['train_batch_size_range'],search_params_range['learning_rate_range'],
                                         search_params_range['hidden_dropout_prob_range'], search_params_range['attention_probs_dropout_prob_range']))
-    for index, param_set in enumerate(param_grid):
+for index, param_set in enumerate(param_grid):
         print(f'STARTING RUN {index/len(param_grid)}')
         #set run 
         args.train_batch_size = param_set[0]
@@ -661,9 +661,14 @@ def main():
         #set bert config args
         bert_args(args.config_file, args.attention_probs_dropout_prob, args.hidden_dropout_prob)
         #run training and eval
-        best_eval_f1, test_f1 = train(args = args)
+        avg_eval_f1, avg_test_f1 = (0, 0)
+        for run in range(2):
+          args.seed = run
+          best_eval_f1, test_f1 = train(args = args)
+          avg_eval_f1 += best_eval_f1/2
+          avg_test_f1 += test_f1/2
         #check scores against json
-        check_scores(args.score_json_path, args.model_name, search_params_run, best_eval_f1, test_f1)
+        check_scores(args.score_json_path, args.model_name, search_params_run, avg_eval_f1, avg_test_f1)
 
     
 if __name__ == "__main__":
