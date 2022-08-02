@@ -650,7 +650,7 @@ def main():
     search_params_range = {arg_name : arg_val for arg_name, arg_val in arg_dict.items() if 'range' in arg_name}  
     param_grid = list(itertools.product(search_params_range['train_batch_size_range'],search_params_range['learning_rate_range'],
                                         search_params_range['hidden_dropout_prob_range'], search_params_range['attention_probs_dropout_prob_range']))
-for index, param_set in enumerate(param_grid):
+    for index, param_set in enumerate(param_grid):
         print(f'STARTING RUN {index/len(param_grid)}')
         #set run 
         args.train_batch_size = param_set[0]
