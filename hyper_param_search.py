@@ -562,7 +562,7 @@ def main():
                         action='store_true',
                         help="Whether to lower case the input text. True for uncased models, False for cased models.")
     parser.add_argument("--max_seq_length",
-                        default=128,
+                        default=512,
                         type=int,
                         help="The maximum total input sequence length after WordPiece tokenization. \n"
                              "Sequences longer than this will be truncated, and sequences shorter \n"
@@ -576,19 +576,19 @@ def main():
                         action='store_true',
                         help="Whether to run eval on the dev set.")
     parser.add_argument("--train_batch_size",
-                        default=32,
+                        default=4,
                         type=int,
                         help="Total batch size for training.")
     parser.add_argument("--eval_batch_size",
-                        default=32,
+                        default=4,
                         type=int,
                         help="Total batch size for eval.")
     parser.add_argument("--learning_rate",
-                        default=5e-5,
+                        default=6e-6,
                         type=float,
                         help="The initial learning rate for Adam.")
     parser.add_argument("--num_train_epochs",
-                        default=3.0,
+                        default=7.0,
                         type=float,
                         help="Total number of training epochs to perform.")
     parser.add_argument("--warmup_proportion",
@@ -614,7 +614,7 @@ def main():
                         help="random seed for initialization")
     parser.add_argument('--gradient_accumulation_steps',
                         type=int,
-                        default=2,
+                        default=1,
                         help="Number of updates steps to accumualte before performing a backward/update pass.")
     parser.add_argument('--optimize_on_cpu',
                         default=False,
