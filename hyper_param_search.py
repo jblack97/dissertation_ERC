@@ -30,8 +30,8 @@ from tqdm.notebook import tqdm , trange
 import numpy as np
 import torch
 import pdb
-from models.BERT import tokenization
-from models.BERT.BERT import BertConfig, Bert_only
+from BERT import tokenization
+from BERT.BERT import BertConfig, Bert_only
 
 
 from optimization import BERTAdam
