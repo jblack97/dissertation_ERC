@@ -6,7 +6,7 @@ import random
 from collections import defaultdict
 from itertools import permutations
 import logging
-from models.BERT import tokenization
+from BERT import tokenization
 import pdb
 import dgl
 import numpy as np
