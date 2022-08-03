@@ -662,11 +662,11 @@ def main():
         bert_args(args.config_file, args.attention_probs_dropout_prob, args.hidden_dropout_prob)
         #run training and eval
         avg_eval_f1, avg_test_f1 = (0, 0)
-        for run in range(2):
+        for run in range(3):
           args.seed = run
           best_eval_f1, test_f1 = train(args = args)
-          avg_eval_f1 += best_eval_f1/2
-          avg_test_f1 += test_f1/2
+          avg_eval_f1 += best_eval_f1/3
+          avg_test_f1 += test_f1/3
         #check scores against json
         check_scores(args.score_json_path, args.model_name, search_params_run, avg_eval_f1, avg_test_f1)
 
