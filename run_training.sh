@@ -7,5 +7,4 @@ echo $MODEL_NAME.bin
   --data_name EmoryNLP   --vocab_file pytorch_models/vocab.txt \
     --config_file pytorch_models/bert_config.json  \
      --init_checkpoint pytorch_models/$MODEL_NAME.bin \
-       --max_seq_length 512   --train_batch_size 12   --learning_rate 1e-5   --num_train_epochs 7.0 \
-         --output_dir pytorch_models/run_checkpoints   --gradient_accumulation_steps 1 
+         --output_dir pytorch_models/run_checkpoints  
