@@ -588,7 +588,7 @@ def main():
                         type=float,
                         help="The initial learning rate for Adam.")
     parser.add_argument("--num_train_epochs",
-                        default=7.0,
+                        default=5.0,
                         type=float,
                         help="Total number of training epochs to perform.")
     parser.add_argument("--warmup_proportion",
