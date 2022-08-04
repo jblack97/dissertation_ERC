@@ -469,7 +469,7 @@ def train(args):
 
         dev_f1 = get_logits4eval_ERC(model, dev_loader, os.path.join(args.output_dir, "logits_dev.txt"), os.path.join(args.output_dir, "dev_result.txt"), device, args.data_name)
         test_f1 = get_logits4eval_ERC(model, test_loader, os.path.join(args.output_dir, "logits_test.txt"), os.path.join(args.output_dir, "test_result.txt"), device, args.data_name)
-        
+        wandb.log({'test_f1':test_f1})
     
         
     os.remove(os.path.join(args.output_dir, "model.pt"))
