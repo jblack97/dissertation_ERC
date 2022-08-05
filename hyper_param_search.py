@@ -337,7 +337,7 @@ def train(args):
     if args.log:
         
         wandb.config = {
-          'model_name' : 'BERT' if args.vocab_file == '/content/drive/MyDrive/thesis/models/uncased_L-12_H-768_A-12/vocab.txt' else 'MPC_BERT',
+          'model_name' : args.model_name,
           'learning_rate' : args.learning_rate,
           'batch_size' : args.train_batch_size
          }
