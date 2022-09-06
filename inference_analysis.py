@@ -103,8 +103,8 @@ def main():
     parser.add_argument('--max_examples', default = 100000000000000000, type = int)
     parser.add_argument('--model_name', required = True, type = str)
     
-    parser.add_argument('--hidden_dropout_prob', default = 0.05, required=True, type = float)
-    parser.add_argument('--attention_probs_dropout_prob', defuault = 0.05, required=True, type = float)
+    parser.add_argument('--hidden_dropout_prob', default = 0.05, type = float)
+    parser.add_argument('--attention_probs_dropout_prob', default = 0.05, type = float)
     parser.add_argument('--score_json_path', 
                         default = None, 
                         type = str,
@@ -125,11 +125,7 @@ def main():
                         type=str,
                         required=True,
                         help="The name of the dataset to train.")
-    parser.add_argument("--encoder_type",
-                        default=None,
-                        type=str,
-                        required=True,
-                        help="The type of pre-trained model.")
+
     parser.add_argument("--vocab_file",
                         default=None,
                         type=str,
@@ -139,11 +135,7 @@ def main():
                         default=None,
                         type=str,
                         help="The merges file that the RoBERTa model was trained on.")
-    parser.add_argument("--output_dir",
-                        default=None,
-                        type=str,
-                        required=True,
-                        help="The output directory where the model checkpoints will be written.")
+    
     parser.add_argument("--init_checkpoint",
                         default=None,
                         type=str,
@@ -232,7 +224,7 @@ def main():
                         action='store_true',
                         help="Whether to use wandb for logging")
     base_args = parser.parse_args()
-    
+    args = base_args
     
     n_class = n_classes[args.data_name]
 
@@ -267,7 +259,7 @@ def main():
     model = Bert_only(config, n_class)
 
     
-    test_set = TUCOREGCNDataset(src_file=args.data_dir, save_file=args.data_dir + "/test_" + args.encoder_type + ".pkl", max_seq_length=args.max_seq_length, tokenizer=tokenizer, n_class=n_class, encoder_type=args.encoder_type)
+    test_set = TUCOREGCNDataset(src_file=args.data_dir, save_file=args.data_dir + "/test_" + 'BERT' + ".pkl", max_seq_length=args.max_seq_length, tokenizer=tokenizer, n_class=n_class, encoder_type=args.encoder_type)
     test_loader = TUCOREGCNDataloader(dataset=test_set, batch_size=args.eval_batch_size, shuffle=False, relation_num=7, max_length=args.max_seq_length)
     bert_args(args.config_file, args.attention_probs_dropout_prob, args.hidden_dropout_prob)
 
@@ -276,16 +268,20 @@ def main():
 
         model_path = os.path.join('/content/drive/MyDrive/thesis/models/', f"fine_tuned_models/{args.model_name}_{model_num}.pt")
 
-        model.load_state_dict(model_path)
+        model.load_state_dict(torch.load(model_path))
+        model.to(device)
         if model_num == 0:
             test_f1, conf_matrix = get_logits4eval_ERC(model, test_loader, None, None, device, args.data_name)
         else:
             temp_test_f1, temp_conf_matrix = get_logits4eval_ERC(model, test_loader, None, None, device, args.data_name)
         
-        test_f1 += temp_test_f1
-        conf_matrix += temp_conf_matrix
+            test_f1 += temp_test_f1
+            conf_matrix += temp_conf_matrix
     test_f1 /= 3
     conf_matrix /=3
 
     print(test_f1)
     print(conf_matrix)
+
+if __name__ == '__main__':
+    main()
