@@ -64,8 +64,8 @@ def calc_test_result(logits, labels_all, data_name):
 
     
     p_weighted, r_weighted, f_weighted, support_weighted = precision_recall_fscore_support(true_label, predicted_label, average=None)
-
-    return p_weighted, r_weighted, f_weighted, support_weighted, conf_matrix
+    _, _, mean_weighted_f, _ = precision_recall_fscore_support(true_label, predicted_label, average='weighted')
+    return p_weighted, r_weighted, f_weighted, support_weighted, conf_matrix, mean_weighted_f
 
 def get_logits4eval_ERC(model, dataloader, savefile, resultsavefile, device, data_name):
     model.eval()
@@ -90,9 +90,9 @@ def get_logits4eval_ERC(model, dataloader, savefile, resultsavefile, device, dat
         for i in range(len(label_ids)):
             labels_all.append(label_ids[i])
     
-    p_weighted, r_weighted, f_weighted, support_weighted, conf_matrix = calc_test_result(logits_all, labels_all, data_name)
+    p_weighted, r_weighted, f_weighted, support_weighted, conf_matrix, mean_weighted_f = calc_test_result(logits_all, labels_all, data_name)
 
-    return f_weighted, conf_matrix
+    return f_weighted, conf_matrix, mean_weighted_f
 
 
 
@@ -226,6 +226,10 @@ def main():
                         default=True,
                         action='store_true',
                         help="Whether to use wandb for logging")
+    parser.add_argument("--pkl_file",
+                        default= "/test_" + 'BERT' + ".pkl",
+                        type = str)
+    parser.add_argument('--shift', default = None, type = int)
     base_args = parser.parse_args()
     args = base_args
     
@@ -262,7 +266,7 @@ def main():
     model = Bert_only(config, n_class)
 
     
-    test_set = TUCOREGCNDataset(src_file=args.data_dir, save_file=args.data_dir + "/test_" + 'BERT' + ".pkl", max_seq_length=args.max_seq_length, tokenizer=tokenizer, n_class=n_class, encoder_type=args.encoder_type)
+    test_set = TUCOREGCNDataset(src_file=args.data_dir, save_file=args.data_dir + args.pkl_file, max_seq_length=args.max_seq_length, tokenizer=tokenizer, n_class=n_class, encoder_type=args.encoder_type, shift = args.shift)
     test_loader = TUCOREGCNDataloader(dataset=test_set, batch_size=args.eval_batch_size, shuffle=False, relation_num=7, max_length=args.max_seq_length)
     bert_args(args.config_file, args.attention_probs_dropout_prob, args.hidden_dropout_prob)
 
@@ -274,16 +278,18 @@ def main():
         model.load_state_dict(torch.load(model_path))
         model.to(device)
         if model_num == 0:
-            test_f1, conf_matrix = get_logits4eval_ERC(model, test_loader, None, None, device, args.data_name)
+            test_f1, conf_matrix, mean_weighted_f1 = get_logits4eval_ERC(model, test_loader, None, None, device, args.data_name)
         else:
-            temp_test_f1, temp_conf_matrix = get_logits4eval_ERC(model, test_loader, None, None, device, args.data_name)
+            temp_test_f1, temp_conf_matrix, temp_mean_weighted_f1 = get_logits4eval_ERC(model, test_loader, None, None, device, args.data_name)
         
             test_f1 += temp_test_f1
             conf_matrix += temp_conf_matrix
+            mean_weighted_f1 +=temp_mean_weighted_f1
     test_f1 /= 3
-
+    mean_weighted_f1 /=3
     print(test_f1)
     print(conf_matrix)
+    print(mean_weighted_f1)
 
 if __name__ == '__main__':
     main()

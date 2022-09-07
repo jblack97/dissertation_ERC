@@ -393,12 +393,17 @@ def truncate_sequence(tokens, speaker_ids, target_mask, ex):
 
 
 
-def convert_examples_to_my_features(examples, max_seq_length, tokenizer):
+def convert_examples_to_my_features(examples, max_seq_length, tokenizer, shift = None):
+    
+    emotion_shift_labels = np.load('/content/drive/MyDrive/thesis/ERC_files/EmoryNLP/emotional_shift_labels.npy')
     print("#examples", len(examples))
     speaker_tokens = ['[unused1]', '[unused2]', 'speaker 1', 'speaker 2', 'speaker 3', 'speaker 4', 'speaker 5', 'speaker 6', 'speaker 7', 'speaker 8', 'speaker 9']
     features = [[]]
     dic = {x : 0 for x in range(7)}
     for (ex_index, example) in enumerate(examples):
+        if shift is not None:
+            if emotion_shift_labels[ex_index] == shift:
+                continue
         #first get rid of shared utterances
         example.text_a = re.sub(', speaker [1-9]', '', example.text_a)
         example.text_b = re.sub(', speaker [1-9]', '', example.text_b)
@@ -505,7 +510,7 @@ def mention2mask(mention_id):
 
 class TUCOREGCNDataset(IterableDataset):
 
-    def __init__(self, src_file, save_file, max_seq_length, tokenizer, n_class, encoder_type):
+    def __init__(self, src_file, save_file, max_seq_length, tokenizer, n_class, encoder_type, shift):
 
         super(TUCOREGCNDataset, self).__init__()
 
@@ -533,7 +538,7 @@ class TUCOREGCNDataset(IterableDataset):
                 print(error)
             #pdb.set_trace()
             if encoder_type == "BERT":
-                features = convert_examples_to_my_features(examples, max_seq_length, tokenizer)
+                features = convert_examples_to_my_features(examples, max_seq_length, tokenizer, shift)
             else:
                 features = convert_examples_to_features_roberta(examples, max_seq_length, tokenizer)
 
