@@ -281,7 +281,6 @@ def main():
             test_f1 += temp_test_f1
             conf_matrix += temp_conf_matrix
     test_f1 /= 3
-    conf_matrix /=3
 
     print(test_f1)
     print(conf_matrix)
