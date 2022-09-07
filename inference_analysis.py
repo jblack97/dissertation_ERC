@@ -102,7 +102,10 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--max_examples', default = 100000000000000000, type = int)
     parser.add_argument('--model_name', required = True, type = str)
-    
+    parser.add_argument("--encoder_type",
+                        default='BERT',
+                        type=str,
+                        help="The type of pre-trained model.")
     parser.add_argument('--hidden_dropout_prob', default = 0.05, type = float)
     parser.add_argument('--attention_probs_dropout_prob', default = 0.05, type = float)
     parser.add_argument('--score_json_path', 
